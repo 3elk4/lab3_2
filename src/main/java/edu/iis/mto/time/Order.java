@@ -1,20 +1,41 @@
 package edu.iis.mto.time;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
-public class Order {
-
+public class Order extends Clock {
     private static final int VALID_PERIOD_HOURS = 24;
+    private static final int ONE_HOUR = 60*60;
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
     private DateTime subbmitionDate;
 
+    private final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
+    private Instant WHEN_STARTED;
+
     public Order() {
         orderState = State.CREATED;
+    }
+
+    @Override
+    public ZoneId getZone() {
+        return DEFAULT_ZONE;
+    }
+
+    @Override
+    public Clock withZone(ZoneId zone) {
+        return Clock.fixed(WHEN_STARTED, zone);
+    }
+
+    @Override
+    public Instant instant() {
+        return WHEN_STARTED.plusSeconds(ONE_HOUR);
     }
 
     public void addItem(OrderItem item) {
@@ -30,7 +51,7 @@ public class Order {
 
         orderState = State.SUBMITTED;
         subbmitionDate = new DateTime();
-
+        WHEN_STARTED = Instant.now();
     }
 
     public void confirm() {
