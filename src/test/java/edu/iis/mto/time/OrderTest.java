@@ -1,5 +1,6 @@
 package edu.iis.mto.time;
 
+import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.ReadableDuration;
 import org.junit.Assert;
@@ -10,7 +11,6 @@ import java.time.Clock;
 
 public class OrderTest {
     private Order order;
-    private final int ONE_HOUR = 60*60*1000;
 
     @Before
     public void setUp(){
@@ -19,7 +19,7 @@ public class OrderTest {
     }
 
     private Instant getInstantAfterHours(int numberOfHours){
-        return Instant.now().withDurationAdded(ONE_HOUR, numberOfHours);
+        return Instant.now().plus(Duration.standardHours(numberOfHours));
     }
 
     @Test (expected = OrderExpiredException.class)
