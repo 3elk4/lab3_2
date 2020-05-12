@@ -1,7 +1,6 @@
 package edu.iis.mto.time;
 
-import org.joda.time.Duration;
-import org.joda.time.Instant;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,44 +8,42 @@ import org.junit.Test;
 
 public class OrderTest {
     private Order order;
+    private MockTimeSource timeSource;
 
     @Before
     public void setUp(){
-        order = new Order();
+        timeSource = new MockTimeSource();
+        order = new Order(timeSource);
         order.addItem(new OrderItem());
-    }
-
-    private Instant getInstantAfterHours(int numberOfHours){
-        return Instant.now().plus(Duration.standardHours(numberOfHours));
     }
 
     @Test (expected = OrderExpiredException.class)
     public void checkIfOrderIsExpired(){
-        order.setInstant(getInstantAfterHours(25));
         order.submit();
+        timeSource.addHours(25);
         order.confirm();
     }
 
     @Test
     public void checkIfOrderIsNotExpired(){
-        order.setInstant(getInstantAfterHours(5));
         order.submit();
+        timeSource.addHours(5);
         order.confirm();
         Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
 
     @Test
     public void checkIfOrderIsAfter24Hours(){
-        order.setInstant(getInstantAfterHours(24));
         order.submit();
+        timeSource.addHours(24);
         order.confirm();
         Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
 
     @Test
-    public void checkIfOrderIsAfter0Hours(){
-        order.setInstant(getInstantAfterHours(0));
+    public void checkIfOrderIsAfterZeroHours(){
         order.submit();
+        timeSource.addHours(0);
         order.confirm();
         Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
