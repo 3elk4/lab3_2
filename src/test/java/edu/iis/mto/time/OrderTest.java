@@ -2,12 +2,10 @@ package edu.iis.mto.time;
 
 import org.joda.time.Duration;
 import org.joda.time.Instant;
-import org.joda.time.ReadableDuration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.Clock;
 
 public class OrderTest {
     private Order order;
@@ -34,7 +32,7 @@ public class OrderTest {
         order.setInstant(getInstantAfterHours(5));
         order.submit();
         order.confirm();
-        Assert.assertNotEquals(Order.State.CANCELLED, order.getOrderState());
+        Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
 
     @Test
@@ -42,7 +40,7 @@ public class OrderTest {
         order.setInstant(getInstantAfterHours(24));
         order.submit();
         order.confirm();
-        Assert.assertNotEquals(Order.State.CANCELLED, order.getOrderState());
+        Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
 
     @Test
@@ -50,6 +48,6 @@ public class OrderTest {
         order.setInstant(getInstantAfterHours(0));
         order.submit();
         order.confirm();
-        Assert.assertNotEquals(Order.State.CANCELLED, order.getOrderState());
+        Assert.assertEquals(Order.State.CONFIRMED, order.getOrderState());
     }
 }
